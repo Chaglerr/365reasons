@@ -256,22 +256,171 @@
     .days { grid-template-columns: repeat(auto-fill, minmax(52px, 1fr)); }
     .day-cell { font-size: 15px; border-radius: 10px; }
   }
+
+  /* ===== ბედნიერი დაბადების დღე ნინი ===== */
+  .fx-layer {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+    z-index: 100;
+    display: none;
+  }
+  body.birthday .fx-layer { display: block; }
+
+  .confetti {
+    position: absolute;
+    top: -24px;
+    width: 10px;
+    height: 14px;
+    border-radius: 2px;
+    opacity: 0.95;
+    animation: confetti-fall linear infinite;
+  }
+  @keyframes confetti-fall {
+    0%   { transform: translate3d(0, -10vh, 0) rotate(0deg); }
+    100% { transform: translate3d(40px, 110vh, 0) rotate(900deg); }
+  }
+
+  .balloon {
+    position: absolute;
+    bottom: -160px;
+    width: 56px;
+    height: 70px;
+    border-radius: 50% 50% 48% 48%;
+    box-shadow: inset -8px -10px 18px rgba(0, 0, 0, 0.18),
+                inset 6px 6px 14px rgba(255, 255, 255, 0.4);
+    animation: balloon-rise linear infinite;
+    opacity: 0.92;
+  }
+  .balloon::before {
+    content: "";
+    position: absolute;
+    bottom: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 6px solid transparent;
+    border-top-color: inherit;
+    filter: brightness(0.85);
+  }
+  .balloon::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    width: 1px;
+    height: 80px;
+    background: rgba(255, 255, 255, 0.35);
+    transform: translateX(-50%);
+  }
+  @keyframes balloon-rise {
+    0%   { transform: translate3d(0, 0, 0) rotate(-3deg); }
+    50%  { transform: translate3d(20px, -60vh, 0) rotate(3deg); }
+    100% { transform: translate3d(-10px, -130vh, 0) rotate(-2deg); }
+  }
+
+  .bday-banner {
+    display: none;
+    margin: 18px auto 0;
+    padding: 10px 22px;
+    background: linear-gradient(135deg, #ff4d8d 0%, #a36bff 50%, #f4c66b 100%);
+    border-radius: 999px;
+    color: white;
+    font-family: "Noto Serif Georgian", serif;
+    font-weight: 700;
+    font-size: clamp(14px, 2.4vw, 18px);
+    box-shadow: 0 10px 30px rgba(255, 77, 141, 0.35);
+    animation: bday-pulse 2.4s ease-in-out infinite;
+  }
+  body.birthday .bday-banner { display: inline-block; }
+  @keyframes bday-pulse {
+    0%, 100% { transform: scale(1); box-shadow: 0 10px 30px rgba(255, 77, 141, 0.35); }
+    50%      { transform: scale(1.05); box-shadow: 0 14px 44px rgba(255, 77, 141, 0.6); }
+  }
+
+  body.birthday h1 {
+    background: linear-gradient(135deg, #ff8ec7 0%, #f4c66b 50%, #a36bff 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    animation: bday-shimmer 4s ease-in-out infinite;
+  }
+  @keyframes bday-shimmer {
+    0%, 100% { filter: drop-shadow(0 0 0 transparent); }
+    50%      { filter: drop-shadow(0 0 24px rgba(255, 142, 199, 0.4)); }
+  }
+
+  body.birthday .today-card {
+    border-color: rgba(255, 142, 199, 0.35);
+    box-shadow: 0 30px 80px -30px rgba(0, 0, 0, 0.6),
+                inset 0 1px 0 rgba(255, 220, 160, 0.08),
+                0 0 80px rgba(255, 77, 141, 0.18);
+  }
+  body.birthday .today-card::before {
+    background: radial-gradient(circle, rgba(255, 142, 199, 0.28), transparent 60%);
+    animation: bday-glow 5s ease-in-out infinite;
+  }
+  @keyframes bday-glow {
+    0%, 100% { opacity: 0.7; transform: scale(1); }
+    50%      { opacity: 1; transform: scale(1.15); }
+  }
+
+  body.birthday .today-label {
+    color: #ff8ec7;
+  }
+  body.birthday .nav-btn.today {
+    background: linear-gradient(135deg, #ff4d8d, #a36bff);
+    color: #fff;
+  }
+  body.birthday .month-btn.active,
+  body.birthday .day-cell.selected {
+    background: linear-gradient(135deg, #ff4d8d, #a36bff);
+    color: #fff;
+  }
+  body.birthday .day-cell.today::after {
+    background: #ff8ec7;
+    box-shadow: 0 0 10px #ff8ec7;
+  }
+
+  .toast-bday { display: none; }
+  body.birthday .toast-default { display: none; }
+  body.birthday .toast-bday { display: inline; color: #ff8ec7; font-weight: 600; }
+  body.birthday .today-toast::before { content: "🎂"; }
+
+  .sparkle {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    background: radial-gradient(circle, #fff 0%, #f4c66b 40%, transparent 70%);
+    border-radius: 50%;
+    animation: sparkle-twinkle 2s ease-in-out infinite;
+    pointer-events: none;
+  }
+  @keyframes sparkle-twinkle {
+    0%, 100% { opacity: 0; transform: scale(0.4); }
+    50%      { opacity: 1; transform: scale(1.2); }
+  }
 </style>
 </head>
 <body>
+  <div class="fx-layer" id="fxLayer" aria-hidden="true"></div>
   <div class="page">
     <header class="hero">
       <div class="brand">365 ☉ Reasons</div>
       <h1>365 მიზეზი დასალევად</h1>
       <br/>
       <p class="subtitle">ყოველ დღეს თავისი მიზეზი აქვს.</p>
+      <div class="bday-banner">🎂 ნინი კარტოზიას დაბადების დღე 🎉</div>
     </header>
 
     <section class="today-card">
       <div class="today-label" id="todayLabel">დღევანდელი მიზეზი</div>
       <div class="today-date" id="dateText">—</div>
       <p class="today-reason" id="reasonText">—</p>
-      <div class="today-toast">გაუმარჯოს!</div>
+      <div class="today-toast">
+        <span class="toast-default">ოიიიიიიიიიიიიიიი</span>
+        <span class="toast-bday">ვულოცავთ ნინის დაბადების დღეს! 🥂🎈</span>
+      </div>
 
       <div class="nav-row">
         <button class="nav-btn" id="prevBtn">← წინა დღე</button>
@@ -702,9 +851,19 @@ const REASONS = [
   ]
 ];
 
-const today = new Date();
-const todayMonth = today.getMonth();
-const todayDay = today.getDate();
+function georgiaToday() {
+  const parts = new Intl.DateTimeFormat("en-US", {
+    timeZone: "Asia/Tbilisi",
+    year: "numeric", month: "numeric", day: "numeric"
+  }).formatToParts(new Date());
+  const month = +parts.find(p => p.type === "month").value - 1;
+  const day = +parts.find(p => p.type === "day").value;
+  return { month, day };
+}
+
+const _t = georgiaToday();
+const todayMonth = _t.month;
+const todayDay = _t.day;
 
 let selMonth = todayMonth;
 let selDay = todayDay;
@@ -719,6 +878,60 @@ function isToday(m, d) {
   return m === todayMonth && d === todayDay;
 }
 
+function isBirthday(m, d) {
+  return m === 4 && d === 1;
+}
+
+const BDAY_COLORS = ["#ff4d8d", "#ff8ec7", "#a36bff", "#5cd9ff", "#f4c66b", "#ffffff", "#ff8a3c"];
+
+function spawnFx() {
+  const layer = document.getElementById("fxLayer");
+  if (layer.dataset.spawned === "1") return;
+  layer.dataset.spawned = "1";
+
+  // confetti
+  for (let i = 0; i < 90; i++) {
+    const c = document.createElement("div");
+    c.className = "confetti";
+    c.style.left = (Math.random() * 100) + "vw";
+    c.style.background = BDAY_COLORS[i % BDAY_COLORS.length];
+    c.style.animationDelay = (Math.random() * 6) + "s";
+    c.style.animationDuration = (4 + Math.random() * 5) + "s";
+    c.style.width = (6 + Math.random() * 8) + "px";
+    c.style.height = (10 + Math.random() * 10) + "px";
+    layer.appendChild(c);
+  }
+
+  // balloons
+  for (let i = 0; i < 8; i++) {
+    const b = document.createElement("div");
+    b.className = "balloon";
+    b.style.left = (5 + i * 12 + Math.random() * 5) + "vw";
+    b.style.background = BDAY_COLORS[i % BDAY_COLORS.length];
+    b.style.color = BDAY_COLORS[i % BDAY_COLORS.length];
+    b.style.animationDelay = (i * 1.5 + Math.random() * 2) + "s";
+    b.style.animationDuration = (10 + Math.random() * 6) + "s";
+    layer.appendChild(b);
+  }
+
+  // sparkles around the card
+  for (let i = 0; i < 16; i++) {
+    const s = document.createElement("div");
+    s.className = "sparkle";
+    s.style.left = (Math.random() * 100) + "vw";
+    s.style.top = (Math.random() * 80 + 10) + "vh";
+    s.style.animationDelay = (Math.random() * 2) + "s";
+    s.style.animationDuration = (1.5 + Math.random() * 2) + "s";
+    layer.appendChild(s);
+  }
+}
+
+function applyBirthday() {
+  const on = isBirthday(selMonth, selDay);
+  document.body.classList.toggle("birthday", on);
+  if (on) spawnFx();
+}
+
 function renderTodayCard() {
   document.getElementById("todayLabel").textContent =
     isToday(selMonth, selDay) ? "დღევანდელი მიზეზი" : "არჩეული დღე";
@@ -726,6 +939,7 @@ function renderTodayCard() {
     selDay + " " + MONTHS[selMonth];
   document.getElementById("reasonText").textContent =
     reasonFor(selMonth, selDay);
+  applyBirthday();
 }
 
 function renderMonths() {
